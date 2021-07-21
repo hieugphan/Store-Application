@@ -1,0 +1,28 @@
+﻿@model CustomerSearchVM
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Search For Customer</h1>
+
+    <form asp-action="SearchForCustomer">
+        <div class="mb-3">
+            <label asp-for="Criteria" class="form-label">Search Criteria</label>
+            @Html.DropDownListFor(m => m.Criteria, new SelectList(Enum.GetValues(typeof(SearchCriteria))))
+        </div>
+        <div class="mb-3">
+            <label asp-for="Value" class="form-label">Search Value</label>
+            <input asp-for="Value" type="text" class="form-control">
+            <span asp-validation-for="Value" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <a asp-controller="Portal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+
+</body>
+</html>

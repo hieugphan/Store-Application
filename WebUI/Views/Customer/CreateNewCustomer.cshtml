@@ -1,0 +1,54 @@
+﻿@model WebUI.Models.CustomerVM
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Add New Customer</h1>
+
+    <div>
+        <form asp-action="CreateNewCustomer">
+            <div class="mb-3">
+                <label asp-for="Fname" class="form-label">First Name</label>
+                <input asp-for="Fname" type="text" class="form-control">
+                <span asp-validation-for="Fname" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Lname" class="form-label">Last Name</label>
+                <input asp-for="Lname" type="text" class="form-control">
+                <span asp-validation-for="Lname" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label">Address</label>
+                <input asp-for="Address" type="text" class="form-control">
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="City" class="form-label">City</label>
+                <input asp-for="City" type="text" class="form-control">
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="State" class="form-label">State</label>
+                <input asp-for="State" type="text" class="form-control">
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" type="text" class="form-control">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">Phone</label>
+                <input asp-for="Phone" type="number" min="0" class="form-control">
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <a asp-controller="Portal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+</body>
+</html>
