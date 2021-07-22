@@ -8,11 +8,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Portal\OpenCustomerPortal.cshtml" />
+    <Content Remove="Views\ManagerPortal\OpenCustomerPortal.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\Portal\OpenCustomerPortal.cshtml" />
+    <None Include="Views\CustomerPortal\OpenCustomerPortal.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

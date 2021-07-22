@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div class="text-center">
+        <h1>Welcome To Manager Portal</h1>
+    </div>
+
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="DisplayAllCustomers">Display All Customers</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="CreateNewCustomer">Add New Customer</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="SearchForCustomer">Search For Customer</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

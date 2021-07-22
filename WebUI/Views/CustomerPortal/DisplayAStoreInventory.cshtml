@@ -1,0 +1,36 @@
+﻿@model IEnumerable<TheStoreInventoryVM>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>The Store's Inventory</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Available Quantity</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                    <td>$@Html.DisplayFor(modelItem => item.ProductPrice)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
+                </tr>            
+             }
+        </tbody>
+    </table>
+
+
+
+    <a asp-controller="CustomerPortal" asp-action="FindAStore" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+</body>
+</html>

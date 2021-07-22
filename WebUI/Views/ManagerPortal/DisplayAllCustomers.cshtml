@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CustomerVM>
+﻿@model IEnumerable<WebUI.Models.CustomerVM>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +6,10 @@
     <title></title>
 </head>
 <body>
-    <h1>List Of Searched Customers</h1>
+    <h1>List Of All Customers</h1>
 
+    @*<button type="button" class="btn btn-secondary">Search</button>
+        <a class="btn btn-secondary" asp-action="CreateNewCustomer">Add</a>*@
 
     <table class="table table-striped">
         <thead>
@@ -39,6 +41,7 @@
             }
         </tbody>
     </table>
-    <a asp-controller="Portal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+    <a asp-controller="ManagerPortal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+
 </body>
 </html>

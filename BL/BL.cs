@@ -57,7 +57,7 @@ namespace BusinessLogic
         public Customer GetACustomer(int p_customerID)
         {
             Customer found = _repo.GetACustomer(p_customerID);
-            if(found == null)
+            if (found == null)
             {
                 throw new Exception("Customer Was Null");
             }

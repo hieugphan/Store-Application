@@ -1,0 +1,33 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Welcome @TempData["fName"], </h1>
+    @{
+        TempData.Keep("fName");
+    }
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="CustomerPortal" asp-action="FindAStore">Find A Store</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="CustomerPortal" asp-action="">View Order History</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="CustomerPortal" asp-action="OpenCustomerPortal">Sign Out</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
