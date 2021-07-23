@@ -1,0 +1,55 @@
+﻿@model IEnumerable<LineItemVM>
+@{ 
+    double total = 0.0;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1 style="text-align:center;">Order Submitted Succesfully</h1>
+
+    <h2>Order Detail:</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Purchased Quantity</th>
+                <th>Line Totals</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.ProductPrice.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        @{
+                            double subTotal = item.ProductPrice * item.Quantity;
+                            total += subTotal;
+                        }
+                        <td>@subTotal.ToString("C")</td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>@total.ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <a asp-controller="CustomerPortal" asp-action="SignInOption" class="btn btn-success" style="position:relative; top:10px; width:77px;">Back</a>
+</body>
+</html>

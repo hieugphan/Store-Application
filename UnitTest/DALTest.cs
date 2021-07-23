@@ -197,6 +197,24 @@ namespace UnitTest
                 //Assert
                 Assert.NotNull(updatedInv);
                 Assert.Equal(p_quantity, updatedInv.Quantity);
+                Assert.Equal(1, updatedInv.Id);
+            }
+        }
+
+        [Fact]
+        public void OverloadedUpdateInventoryQuantityShouldUpdateInventory()
+        {
+            using (var context = new DBContext(_options))
+            {
+                //Arrange
+                IDAL repo = new DAL(context);
+
+                //Act
+                Inventory updatedInv = repo.UpdateInventoryQuantity(1, 40);
+
+                //Assert
+                Assert.NotNull(updatedInv);
+                Assert.Equal(10, updatedInv.Quantity);
             }
         }
 

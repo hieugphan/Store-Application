@@ -31,10 +31,10 @@ namespace UnitTest
                 }
             );
 
-            var customerController = new CustomerController(mockBL.Object);
+            var managerPortalController = new ManagerPortalController(mockBL.Object);
 
             //Act
-            var result = customerController.DisplayAllCustomers();
+            var result = managerPortalController.DisplayAllCustomers();
 
             //Assert
             //checks the viewResult the same type of ViewResult

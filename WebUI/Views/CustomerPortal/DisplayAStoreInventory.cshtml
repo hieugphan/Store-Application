@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<TheStoreInventoryVM>
+@*@{ 
+    List<TheStoreInventoryVM> availableProductId = new List<TheStoreInventoryVM>();
+    int maxQuantity = 0;
+    double productPrice = 0.00;
+}*@
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,11 +11,12 @@
     <title></title>
 </head>
 <body>
-    <h1>The Store's Inventory</h1>
+    <h1>Store @ViewBag.Name's Inventory</h1>
 
     <table class="table table-striped">
         <thead>
             <tr>
+                @*<th>Product Id</th>*@
                 <th>Product Name</th>
                 <th>Product Price</th>
                 <th>Available Quantity</th>
@@ -21,16 +27,22 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    @*<td>@Html.DisplayFor(modelItem => item.ProductId)</td>*@
                     <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
                     <td>$@Html.DisplayFor(modelItem => item.ProductPrice)</td>
                     <td>@Html.DisplayFor(modelItem => item.Quantity)</td>
-                </tr>            
-             }
+                    <td>
+                        @Html.ActionLink("Purchase", "CreateQuantity", item, new { @style = "color:white", @class = "btn btn-secondary" })
+                    </td>
+                </tr>
+
+            }
         </tbody>
     </table>
 
 
+    <a asp-controller="CustomerPortal" asp-action="FindAStore" class="btn btn-danger" style="position:relative; top:10px;">Empty Cart & Select Another Store</a>
 
-    <a asp-controller="CustomerPortal" asp-action="FindAStore" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+    <a asp-controller="CustomerPortal" asp-action="ViewCart" class="btn btn-primary" style="position:relative; top:10px;">ViewCart</a>
 </body>
 </html>

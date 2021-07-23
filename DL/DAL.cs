@@ -19,7 +19,7 @@ namespace DataAccessLogic
         {
             _context.LineItems.Add(p_lineItem);
             _context.SaveChanges();
-            return _context.LineItems.AsNoTracking().FirstOrDefault(li => li.OrderId == p_lineItem.OrderId
+            return _context.LineItems.FirstOrDefault(li => li.OrderId == p_lineItem.OrderId
                                                                         && li.ProductId == p_lineItem.ProductId
                                                                         && li.Quantity == p_lineItem.Quantity);
         }
@@ -28,7 +28,7 @@ namespace DataAccessLogic
         {
             _context.Orders.Add(p_order);
             _context.SaveChanges();
-            return _context.Orders.AsNoTracking().FirstOrDefault(order => order.CustomerId == p_order.CustomerId
+            return _context.Orders.FirstOrDefault(order => order.CustomerId == p_order.CustomerId
                                                                         && order.StoreFrontId == p_order.StoreFrontId
                                                                         && order.TotalPrice == p_order.TotalPrice);
         }
@@ -37,7 +37,7 @@ namespace DataAccessLogic
         {
             _context.Customers.Add(p_customer);
             _context.SaveChanges();
-            return _context.Customers.AsNoTracking().FirstOrDefault(cust => cust.Fname == p_customer.Fname
+            return _context.Customers.FirstOrDefault(cust => cust.Fname == p_customer.Fname
                                                                             && cust.Lname == p_customer.Lname
                                                                             && cust.Phone == p_customer.Phone
                                                                             && cust.Email == p_customer.Email);
@@ -47,16 +47,21 @@ namespace DataAccessLogic
         {
             _context.Inventories.Add(p_invt);
             _context.SaveChanges();
-            return _context.Inventories.AsNoTracking().FirstOrDefault(invt => invt.ProductId == p_invt.ProductId
+            return _context.Inventories.FirstOrDefault(invt => invt.ProductId == p_invt.ProductId
                                                                                 && invt.StoreFrontId == p_invt.StoreFrontId
                                                                                 && invt.Quantity == p_invt.Quantity);
         }
 
         public Customer GetACustomer(int p_customerID)
         {
-            return _context.Customers.AsNoTracking().FirstOrDefault(cust => cust.Id == p_customerID);
+            return _context.Customers.FirstOrDefault(cust => cust.Id == p_customerID);
             //Find method requires the primary key
             //return _context.Customers.Find(p_customerID);
+        }
+
+        public List<Order> GetACustomerOrders(int p_customerId)
+        {
+            return _context.Orders.Where(order => order.CustomerId == p_customerId).Select(order => order).ToList();
         }
 
         public List<Customer> GetAllCustomers()
@@ -89,6 +94,11 @@ namespace DataAccessLogic
             return _context.StoreFronts.Select(sf => sf).ToList();
         }
 
+        public List<Order> GetAStoreFrontOrders(int p_storeFrontId)
+        {
+            return _context.Orders.Where(order => order.StoreFrontId == p_storeFrontId).Select(order => order).ToList();
+        }
+
         public List<Inventory> GetAStoreInventory(StoreFront p_storeFront)
         {
             return _context.Inventories.Where(inv => inv.StoreFrontId == p_storeFront.Id).Select(inv => inv).ToList();
@@ -106,6 +116,16 @@ namespace DataAccessLogic
             _context.SaveChanges();
             //return _context.Inventories.FirstOrDefault(invt => invt == p_inv);
             return _context.Inventories.Find(p_inv.Id);
+        }
+
+        public Inventory UpdateInventoryQuantity(int p_invId, int p_purchasedQuantity)
+        {
+            Inventory theInventory = _context.Inventories.FirstOrDefault(inv => inv.Id == p_invId);
+            theInventory.Quantity -= p_purchasedQuantity;
+            _context.Inventories.Update(theInventory);
+            _context.SaveChanges();
+            return theInventory;
+
         }
     }
 }

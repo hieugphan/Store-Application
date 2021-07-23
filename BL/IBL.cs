@@ -78,6 +78,14 @@ namespace BusinessLogic
         Inventory UpdateInventoryQuantity(Inventory p_inv);
 
         /// <summary>
+        /// Updates an inventory using p_invId and substract its inventory to p_purchasedQuantity --- DB-Inventories
+        /// </summary>
+        /// <param name="p_invId">inventory Id</param>
+        /// <param name="p_purchasedQuantity">line item quantity</param>
+        /// <returns></returns>
+        Inventory UpdateInventoryQuantity(int p_invId, int p_purchasedQuantity);
+
+        /// <summary>
         /// Creates a record of a newly added product to DB-Inventories
         /// </summary>
         /// <param name="p_invt"></param>
@@ -123,6 +131,18 @@ namespace BusinessLogic
         /// </summary>
         /// <returns>list of all orders</returns>
         List<Order> GetAllOrders();
+        /// <summary>
+        /// Gets all orders of a customer from DB-Orders
+        /// </summary>
+        /// <param name="p_customerId">customer ID</param>
+        /// <returns></returns>
+        List<Order> GetACustomerOrders(int p_customerId);
+        /// <summary>
+        /// Gets all orders of a store front from DB-Orders
+        /// </summary>
+        /// <param name="p_storeFrontId">store front ID</param>
+        /// <returns></returns>
+        List<Order> GetAStoreFrontOrders(int p_storeFrontId);
 
         /// <summary>
         /// Adds an order to DB-Orders

@@ -13,6 +13,9 @@ namespace WebUI.Controllers
     public class CustomerPortalController : Controller
     {
         private IBL _BL;
+        private static List<LineItemVM> shoppingCart = new List<LineItemVM>();
+        private static string productName = "";
+        private static double productPrice = 0.00;
         public CustomerPortalController(IBL p_BL)
         {
             _BL = p_BL;
@@ -97,12 +100,14 @@ namespace WebUI.Controllers
 
         public IActionResult SignInOption()
         {
-
             return View();
         }
 
+        
+
         public IActionResult FindAStore()
         {
+            shoppingCart.Clear();
             return View(
                 _BL.GetAllStoreFronts()
                 .Select(sf => new StoreFrontVM(sf))
@@ -113,10 +118,10 @@ namespace WebUI.Controllers
         public IActionResult DisplayAStoreInventory(int p_sfId)
         {
             TempData["sfId"] = p_sfId;
-            //List<InventoryVM> theStoreInventory = _BL.GetAStoreInventory(p_sfId).Select(inv => new InventoryVM(inv)).ToList();
+            ViewBag.Name = _BL.GetAStore(p_sfId).Name;
             List<Inventory> theStoreInventory = _BL.GetAStoreInventory(p_sfId);
             List<Product> listOfProducts = _BL.GetAllProducts();
-            List<TheStoreInventoryVM> theStoreInventoryVM = new List<TheStoreInventoryVM>();
+            List<TheStoreInventoryVM> listOfTheStoreInventoryVM = new List<TheStoreInventoryVM>();
             foreach(Inventory inv in theStoreInventory)
             {
                 TheStoreInventoryVM inventory = new TheStoreInventoryVM();
@@ -132,11 +137,120 @@ namespace WebUI.Controllers
                         inventory.ProductPrice = p.Price;
                     }
                 }
-                theStoreInventoryVM.Add(inventory);
+                listOfTheStoreInventoryVM.Add(inventory);
             }
 
-            //TempData["theStoreInventoryVM"] = theStoreInventoryVM;
-            return View(theStoreInventoryVM);
+
+            return View(listOfTheStoreInventoryVM);
+        }
+
+        public IActionResult CreateQuantity(TheStoreInventoryVM p_theStoreInventoryVM)
+        {
+            TempData["inventoryId"] = p_theStoreInventoryVM.Id;
+            TempData["productId"] = p_theStoreInventoryVM.ProductId;
+            productName = p_theStoreInventoryVM.ProductName;
+            productPrice = p_theStoreInventoryVM.ProductPrice;
+            return View(p_theStoreInventoryVM);
+        }
+
+        public IActionResult AddToCart(int p_quantity)
+        {
+            int sfId = (int)TempData["sfId"];
+            LineItemVM liVM = new LineItemVM();
+            liVM.CustomerId = (int)TempData["customerId"];
+            liVM.StoreFrontId = sfId;
+            liVM.InventoryId = (int)TempData["inventoryId"];
+            liVM.ProductId = (int)TempData["productId"];
+            liVM.ProductPrice = productPrice;
+            liVM.ProductName = productName;
+            liVM.Quantity = p_quantity;
+            TempData.Keep("customerId");
+            TempData.Keep("sfId");
+            TempData.Keep("inventoryId");
+            TempData.Keep("productId");
+            TempData.Keep("productPrice");
+            TempData.Keep("productName");
+            shoppingCart.Add(liVM);
+            return RedirectToAction("ViewCart");
+        }
+
+        public IActionResult ViewCart()
+        {
+            return View(shoppingCart);
+        }
+
+        public IActionResult EmptyCart()
+        {
+            shoppingCart.Clear();
+            return View(nameof(ViewCart));
+        }
+
+        public IActionResult CheckOut()
+        {
+            //calculate cart total
+            double total = 0.0;
+            foreach(LineItemVM liVM in shoppingCart)
+            {
+                total += liVM.ProductPrice * liVM.Quantity;
+            }
+
+            //Create a new order and write to DB
+            Order newOrder = new Order();
+            newOrder.CustomerId = (int)TempData["customerId"];
+            newOrder.StoreFrontId = (int)TempData["sfId"];
+            newOrder.TotalPrice = total;
+            newOrder.Date = DateTime.Now;
+            newOrder = _BL.AddAnOrder(newOrder);
+
+            //Create lineItems in the cart and write to DB
+            foreach (LineItemVM liVM in shoppingCart)
+            {
+                LineItem li = new LineItem();
+                li.OrderId = newOrder.Id;
+                li.ProductId = liVM.ProductId;
+                li.Quantity = liVM.Quantity;
+                li = _BL.AddALineItem(li);
+            }
+
+            //Update the store inventory and write to DB
+            foreach (LineItemVM liVM in shoppingCart)
+            {
+                _BL.UpdateInventoryQuantity(liVM.InventoryId, liVM.Quantity);
+            }
+
+
+            TempData.Keep("customerId");
+            TempData.Keep("sfId");
+
+            List<LineItemVM> receipt = new List<LineItemVM>(shoppingCart);
+            shoppingCart.Clear();
+            return View(receipt);
+        }
+
+        public IActionResult ViewOrderHistory()
+        {
+            int customerId = (int)TempData["customerId"];
+            TempData.Keep("customerId");
+            List<OrderVM> listOfCustomerOrders = _BL.GetACustomerOrders(customerId).Select(order => new OrderVM(order)).ToList();
+            return View(listOfCustomerOrders);
+        }
+
+        public IActionResult ViewOrderDetail(int p_orderId)
+        {
+            List<LineItemVM> listOfAnOrderLineItems = _BL.GetAnOrderLineItems(p_orderId).Select(li => new LineItemVM(li)).ToList();
+            List<Product> listOfProducts = _BL.GetAllProducts();
+            foreach(LineItemVM liVM in listOfAnOrderLineItems)
+            {
+                foreach(Product p in listOfProducts)
+                {
+                    if(liVM.ProductId == p.Id)
+                    {
+                        liVM.ProductName = p.Name;
+                        liVM.ProductPrice = p.Price;
+                    }
+                }
+            }
+            return View(listOfAnOrderLineItems);
         }
     }
 }

@@ -1,0 +1,59 @@
+﻿@model IEnumerable<LineItemVM>
+@{ 
+    double total = 0.0;
+    int sfId = (int)TempData["sfId"];
+    TempData.Keep("sfId");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Purchased Quantity</th>
+                <th>Line Totals</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.ProductPrice.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        @{
+                            double subTotal = item.ProductPrice * item.Quantity;
+                            total += subTotal;
+                        }
+                        <td>@subTotal.ToString("C")</td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>@total.ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    @Html.ActionLink("Add More Products", "DisplayAStoreInventory", new { p_sfId = sfId }, new { @style = "color:white; position:relative; top:10px;", @class = "btn btn-primary" })
+    <a asp-controller="CustomerPortal" asp-action="EmptyCart" class="btn btn-danger" style="position:relative; top:10px;">Empty Cart</a>
+    @if (Model != null)
+    {
+        @*@Html.ActionLink("Check Out", "CheckOut", Model, new { @style = "color:white; position:relative; top:10px;", @class = "btn btn-success" })*@
+        <a asp-controller="CustomerPortal" asp-action="CheckOut" class="btn btn-success" style="position:relative; top:10px;">CheckOut</a>
+    }
+</body>
+</html>

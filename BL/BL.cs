@@ -65,6 +65,11 @@ namespace BusinessLogic
             return found;
         }
 
+        public List<Order> GetACustomerOrders(int p_customerId)
+        {
+            return _repo.GetACustomerOrders(p_customerId);
+        }
+
         public List<Customer> GetAllCustomers()
         {
             return _repo.GetAllCustomers();
@@ -135,6 +140,11 @@ namespace BusinessLogic
                 }
             }
             return theStore;
+        }
+
+        public List<Order> GetAStoreFrontOrders(int p_storeFrontId)
+        {
+            return _repo.GetAStoreFrontOrders(p_storeFrontId);
         }
 
         public List<Inventory> GetAStoreInventory(StoreFront p_storeFront)
@@ -1097,6 +1107,11 @@ namespace BusinessLogic
         {
             //Need null exception handler
             return _repo.UpdateInventoryQuantity(p_inv);
+        }
+
+        public Inventory UpdateInventoryQuantity(int p_invId, int p_purchasedQuantity)
+        {
+            return _repo.UpdateInventoryQuantity(p_invId, p_purchasedQuantity);
         }
 
         public void ViewOrderHistory(Customer p_customer)

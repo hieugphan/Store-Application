@@ -11,17 +11,19 @@
 
         <div class="mb-3">
             <label class="form-label">First Name</label>
-            <input name="p_fname" type="text" class="form-control">
+            <input name="p_fname" type="text" class="form-control" required>
 
         </div>
 
         <div class="mb-3">
             <label class="form-label">Email</label>
-            <input name="p_email" type="text" class="form-control">
+            <input name="p_email" type="text" class="form-control" required>
         </div>
 
         <button type="submit" class="btn btn-primary">Sign In</button>
     </form>
     <a asp-controller="CustomerPortal" asp-action="OpenCustomerPortal" class="btn btn-danger" style="position:relative; top:10px; width:74.5px;">Back</a>
+    
+
 </body>
 </html>

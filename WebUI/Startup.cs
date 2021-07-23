@@ -36,7 +36,6 @@ namespace WebUI
             services.AddScoped<IDAL, DAL>();
             services.AddScoped<IBL, BL>();
 
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +57,7 @@ namespace WebUI
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

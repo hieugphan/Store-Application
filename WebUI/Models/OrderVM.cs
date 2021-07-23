@@ -19,6 +19,7 @@ namespace WebUI.Models
             CustomerId = p_order.CustomerId;
             StoreFrontId = p_order.StoreFrontId;
             TotalPrice = p_order.TotalPrice;
+            Date = p_order.Date;
         }
 
         public int Id { get; set; }
@@ -28,5 +29,6 @@ namespace WebUI.Models
         public int StoreFrontId { get; set; }
         [Required]
         public double TotalPrice { get; set; }
+        public DateTime Date { get; set; }
     }
 }
