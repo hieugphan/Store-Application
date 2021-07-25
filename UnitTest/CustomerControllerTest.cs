@@ -34,7 +34,7 @@ namespace UnitTest
             var managerPortalController = new ManagerPortalController(mockBL.Object);
 
             //Act
-            var result = managerPortalController.DisplayAllCustomers();
+            var result = managerPortalController.CustomerDisplayAllCustomers();
 
             //Assert
             //checks the viewResult the same type of ViewResult

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<LineItemVM>
+@{
+    double total = 0.0;
+    int sfId = (int)TempData["sfId"];
+    TempData.Keep("sfId");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Order Detail:</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Purchased Quantity</th>
+                <th>Line Totals</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductId</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.ProductPrice.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        @{
+                            double subTotal = item.ProductPrice * item.Quantity;
+                            total += subTotal;
+                        }
+                        <td>@subTotal.ToString("C")</td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4">Total</td>
+                <td>@total.ToString("C")</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    @*@Html.ActionLink("Back", "DisplayAStoreFrontOrders", new { p_sfId =  sfId}, new { @style = "color:white; position:relative; top:10px; width:77px;", @class = "btn btn-secondary" })*@
+    <a asp-action="OrderDisplayAStoreFrontOrders" asp-controller="ManagerPortal" asp-route-p_sfId="@sfId" style = "color:white; position:relative; top:10px; width:77px;" class = "btn btn-danger" >Back</a>
+</body>
+</html>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<StoreFrontVM>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>List Of Stores</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Store Name</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Inventory</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                    <td>@Html.DisplayFor(modelItem => item.City)</td>
+                    <td>@Html.DisplayFor(modelItem => item.State)</td>
+                    <td>
+                        @Html.ActionLink("Display", "InventoryDisplayAStoreInventory", new { p_sfId = item.Id }, new { @style = "color:white", @class = "btn btn-secondary" })
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    <a asp-controller="ManagerPortal" asp-action="Inventory" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+</body>
+</html>

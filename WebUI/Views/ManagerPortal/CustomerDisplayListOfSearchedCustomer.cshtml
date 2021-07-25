@@ -31,14 +31,14 @@
                     <td>@Html.DisplayFor(modelItem => item.City)</td>
                     <td>@Html.DisplayFor(modelItem => item.State)</td>
                     <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                    <td>
+                    <td>@String.Format("{0:(###) ###-####}", long.Parse(item.Phone))</td>
+                    @*<td>
                         @Html.ActionLink("Edit", "Edit", new { p_id = item.Id }, new { @style = "color:white", @class = "btn btn-secondary" })
-                    </td>
+                    </td>*@
                 </tr>
             }
         </tbody>
     </table>
-    <a asp-controller="ManagerPortal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+    <a asp-controller="ManagerPortal" asp-action="CustomerSearchForCustomer" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
 </body>
 </html>

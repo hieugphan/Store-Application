@@ -1,0 +1,51 @@
+﻿@model IEnumerable<OrderVM>
+@{ 
+    int sfId = (int)TempData["sfId"];
+    TempData.Keep("sfId");
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1 style="text-align:center;">Order History</h1>
+    @{ if (Model.Count() > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order Id</th>
+                        <th>Customer Id</th>
+                        <th>@Html.ActionLink("Total Price", "OrderDisplayAStoreFrontOrders", new { p_sfId = sfId, sortOrder = ViewBag.PriceSortParm })</th>
+                        <th>@Html.ActionLink("Date of Sale", "OrderDisplayAStoreFrontOrders", new { p_sfId = sfId, sortOrder = ViewBag.DateSortParm })</th>
+                        <th>Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.CustomerId</td>
+                            <td>@item.TotalPrice.ToString("C")</td>
+                            <td>@item.Date</td>
+                            <td>
+                                @Html.ActionLink("Display", "OrderDisplayOrderDetail", new { p_orderId = item.Id }, new { @style = "color:white", @class = "btn btn-secondary" })
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h2>Store Front Has No Order History</h2>
+        }
+    }
+    <a asp-controller="ManagerPortal" asp-action="OrderDisplayAllStores" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+</body>
+</html>

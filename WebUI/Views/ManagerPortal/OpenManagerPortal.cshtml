@@ -9,25 +9,14 @@
         <h1>Welcome To Manager Portal</h1>
     </div>
 
-    <table>
-        <tbody>
-            <tr>
-                <td>
-                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="DisplayAllCustomers">Display All Customers</a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="CreateNewCustomer">Add New Customer</a>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <a type="button" class="btn btn-secondary btn-lg" asp-controller="ManagerPortal" asp-action="SearchForCustomer">Search For Customer</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <form asp-action="OpenManagerPortal">
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Password</label>
+            <input name="p_password" type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 
 </body>
 </html>

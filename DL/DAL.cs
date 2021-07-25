@@ -109,6 +109,14 @@ namespace DataAccessLogic
             return _context.Inventories.Where(inv => inv.StoreFrontId == p_storeFrontId).Select(inv => inv).ToList();
         }
 
+        public Inventory ReplenishInventory(int p_invId, int p_replenishedQuantity)
+        {
+            Inventory theInventory = _context.Inventories.FirstOrDefault(inv => inv.Id == p_invId);
+            theInventory.Quantity += p_replenishedQuantity;
+            _context.Inventories.Update(theInventory);
+            _context.SaveChanges();
+            return theInventory;
+        }
 
         public Inventory UpdateInventoryQuantity(Inventory p_inv)
         {
@@ -125,7 +133,8 @@ namespace DataAccessLogic
             _context.Inventories.Update(theInventory);
             _context.SaveChanges();
             return theInventory;
-
         }
+
+
     }
 }

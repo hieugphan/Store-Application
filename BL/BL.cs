@@ -663,6 +663,11 @@ namespace BusinessLogic
             }
         }
 
+        public Inventory ReplenishInventory(int p_invId, int p_replenishedQuantity)
+        {
+            return _repo.ReplenishInventory(p_invId, p_replenishedQuantity);
+        }
+
         public void SearchAndDisplayCustomer(string p_criteria)
         {
             List<Customer> listOfSearchedCustomer = new List<Customer>();

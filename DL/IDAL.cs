@@ -71,6 +71,14 @@ namespace DataAccessLogic
         Inventory AddNewProductInventory(Inventory p_invt);
 
         /// <summary>
+        /// Replenishes an inventory quantity by adding current quantity by p_replenishedQuantity --- DB-Inventories
+        /// </summary>
+        /// <param name="p_invId">inventory Id</param>
+        /// <param name="p_replenishedQuantity">replenished quantity</param>
+        /// <returns></returns>
+        Inventory ReplenishInventory(int p_invId, int p_replenishedQuantity);
+
+        /// <summary>
         /// Gets all line items from DB-LineItems
         /// </summary>
         /// <returns>list of all line items</returns>

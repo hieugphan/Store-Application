@@ -227,11 +227,31 @@ namespace WebUI.Controllers
             return View(receipt);
         }
 
-        public IActionResult ViewOrderHistory()
+        public IActionResult ViewOrderHistory(string sortOrder)
         {
             int customerId = (int)TempData["customerId"];
             TempData.Keep("customerId");
-            List<OrderVM> listOfCustomerOrders = _BL.GetACustomerOrders(customerId).Select(order => new OrderVM(order)).ToList();
+
+            ViewBag.PriceSortParm = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            IEnumerable<OrderVM> listOfCustomerOrders = _BL.GetACustomerOrders(customerId).Select(order => new OrderVM(order)).ToList();
+
+            switch (sortOrder)
+            {
+                case "price_desc":
+                    listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.TotalPrice);
+                    break;
+                case "Date":
+                    listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.Date);
+                    break;
+                case "date_desc":
+                    listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.Date);
+                    break;
+                default:
+                    listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.TotalPrice);
+                    break;
+            }
+
             return View(listOfCustomerOrders);
         }
 

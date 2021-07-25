@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1 style="text-align:center">Manager Options</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary" asp-controller="ManagerPortal" asp-action="Customer">Customer</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary" asp-controller="ManagerPortal" asp-action="Inventory">Inventory</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a type="button" class="btn btn-secondary" asp-controller="ManagerPortal" asp-action="Order">Order</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a asp-controller="ManagerPortal" asp-action="OpenManagerPortal" class="btn btn-danger">Log Out</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
+</html>

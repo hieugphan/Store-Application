@@ -78,10 +78,10 @@ namespace BusinessLogic
         Inventory UpdateInventoryQuantity(Inventory p_inv);
 
         /// <summary>
-        /// Updates an inventory using p_invId and substract its inventory to p_purchasedQuantity --- DB-Inventories
+        /// Updates an inventory by substracting current quantity by p_purchasedQuantity --- DB-Inventories
         /// </summary>
         /// <param name="p_invId">inventory Id</param>
-        /// <param name="p_purchasedQuantity">line item quantity</param>
+        /// <param name="p_purchasedQuantity">purchased quantity</param>
         /// <returns></returns>
         Inventory UpdateInventoryQuantity(int p_invId, int p_purchasedQuantity);
 
@@ -91,6 +91,14 @@ namespace BusinessLogic
         /// <param name="p_invt"></param>
         /// <returns></returns>
         Inventory AddNewProductInventory(Inventory p_invt);
+
+        /// <summary>
+        /// Replenishes an inventory quantity by adding current quantity by p_replenishedQuantity --- DB-Inventories
+        /// </summary>
+        /// <param name="p_invId">inventory Id</param>
+        /// <param name="p_replenishedQuantity">replenished quantity</param>
+        /// <returns></returns>
+        Inventory ReplenishInventory(int p_invId, int p_replenishedQuantity);
 
         /// <summary>
         /// AddNewProductInventory or ReplenishInventory and Displays

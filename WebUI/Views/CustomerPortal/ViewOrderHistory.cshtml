@@ -8,16 +8,16 @@
 <body>
     <h1 style="text-align:center;">Order History</h1>
 
-    @{ if (Model != null)
+    @{ if (Model.Count() > 0)
         {
             <table class="table table-striped">
                 <thead>
-                    <tr>
-                        <th>Order Id</th>
-                        <th>Store Front Id</th>
-                        <th>Total Price</th>
-                        <th>Date of Purchase</th>
-                    </tr>
+                        <tr>
+                            <th>Order Id</th>
+                            <th>Store Front Id</th>
+                            <th>@Html.ActionLink("Total Price", "ViewOrderHistory", new { sortOrder = ViewBag.PriceSortParm })</th>
+                            <th>@Html.ActionLink("Date of Purchase", "ViewOrderHistory", new { sortOrder = ViewBag.DateSortParm })</th>
+                        </tr>
                 </thead>
                 <tbody>
 
@@ -42,6 +42,6 @@
             <h2>Customer Has No Order History</h2>
         }
     }
-    <a asp-controller="CustomerPortal" asp-action="SignInOption" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+    <a asp-controller="CustomerPortal" asp-action="SignInOption" class="btn btn-secondary" style="position:relative; top:10px; width:77px;">Back</a>
 </body>
 </html>

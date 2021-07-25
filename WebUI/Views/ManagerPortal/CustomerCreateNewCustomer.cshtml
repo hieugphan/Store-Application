@@ -9,7 +9,7 @@
     <h1>Add New Customer</h1>
 
     <div>
-        <form asp-action="CreateNewCustomer">
+        <form asp-action="CustomerCreateNewCustomer">
             <div class="mb-3">
                 <label asp-for="Fname" class="form-label">First Name</label>
                 <input asp-for="Fname" type="text" class="form-control">
@@ -49,6 +49,6 @@
         </form>
     </div>
 
-    <a asp-controller="ManagerPortal" asp-action="OpenManagerPortal" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
+    <a asp-controller="ManagerPortal" asp-action="Customer" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
 </body>
 </html>
