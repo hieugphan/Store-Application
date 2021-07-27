@@ -100,6 +100,44 @@ namespace UnitTest
             }
         }
 
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void GetAStoreFrontOrdersShouldGetAStoreFrontOrders(int p_storeFrontId)
+        {
+            using (var context = new DBContext(_options))
+            {
+                //Arrange
+                IDAL repo = new DAL(context);
+
+                //Act
+                List<Order> listOfStoreFrontOrders = repo.GetAStoreFrontOrders(p_storeFrontId);
+
+                //Assert
+                Assert.NotNull(listOfStoreFrontOrders);
+                Assert.Equal(2, listOfStoreFrontOrders.Count);
+            }
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void GetACustomerOrdersShouldGetACustomerOrders(int p_customerId)
+        {
+            using (var context = new DBContext(_options))
+            {
+                //Arrange
+                IDAL repo = new DAL(context);
+
+                //Act
+                List<Order> listOfStoreFrontOrders = repo.GetACustomerOrders(p_customerId);
+
+                //Assert
+                Assert.NotNull(listOfStoreFrontOrders);
+                Assert.Equal(2, listOfStoreFrontOrders.Count);
+            }
+        }
+
         [Fact]
         public void GetAllLineItemsShouldGetAllLineItems()
         {
@@ -175,6 +213,23 @@ namespace UnitTest
             }
         }
 
+        [Fact]
+        public void OverloadGetAStoreInventoryShouldGetAStoreInventory()
+        {
+            using (var context = new DBContext(_options))
+            {
+                //Arrange
+                IDAL repo = new DAL(context);
+                StoreFront theStore = repo.GetAllStoreFronts()[0];
+                //Act
+                List<Inventory> theStoreInventory = repo.GetAStoreInventory(theStore);
+
+                //Assert
+                Assert.NotNull(theStoreInventory);
+                Assert.Equal(3, theStoreInventory.Count);
+            }
+        }
+
         [Theory]
         [InlineData(100)]
         [InlineData(150)]
@@ -217,6 +272,23 @@ namespace UnitTest
                 Assert.Equal(10, updatedInv.Quantity);
             }
         }
+
+        [Fact]
+        public void ReplenishInventoryShouldReplenishInventory()
+        {
+            using (var context = new DBContext(_options))
+            {
+                //Arrange
+                IDAL repo = new DAL(context);
+                //Act
+                repo.ReplenishInventory(1, 50);
+
+                //Assert
+                Assert.Equal(100, repo.GetAllInventories()[0].Quantity);
+            }
+        }
+
+        
 
         //Seeds or Populates the in-memory DB
         private void Seed()

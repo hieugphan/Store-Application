@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebUI.Models;
+using Serilog;
 
 namespace WebUI.Controllers
 {
@@ -34,7 +35,9 @@ namespace WebUI.Controllers
             }
             else
             {
-                return RedirectToAction("OpenManagerPortal");
+                Log.Information("Manager Fail To Log In");
+                ViewBag.Error = "Incorrect Password";
+                return View();
             }
         }
 
@@ -51,12 +54,20 @@ namespace WebUI.Controllers
 
         public IActionResult CustomerDisplayAllCustomers()
         {
-            //convert Customer obj to CustomerVM obj
-            return View(
-                   _BL.GetAllCustomers()
-                   .Select(cust => new CustomerVM(cust))
-                   .ToList()
-            );
+            try
+            {
+                //convert Customer obj to CustomerVM obj
+                return View(
+                       _BL.GetAllCustomers()
+                       .Select(cust => new CustomerVM(cust))
+                       .ToList()
+                );
+            }
+            catch (Exception)
+            {
+                Log.Information("Fail To Get All Customer From DB");
+                return View(nameof(Customer));
+            }
         }
 
         //This action method only show the view
@@ -92,19 +103,21 @@ namespace WebUI.Controllers
             }
             catch (Exception)
             {
+                Log.Information("Fail To Add Customer");
+                ViewBag.Error = "Missing/Invalid Input --- Try Again";
                 return View();
             }
 
+            Log.Information("ModelState Invalid");
+            ViewBag.Error = "Missing/Invalid Input --- Try Again";
             return View();
         }
 
 
-
-
-        public IActionResult CustomerEditCustomer(int p_id)
-        {
-            return View(new CustomerVM(_BL.GetACustomer(p_id)));
-        }
+        //public IActionResult CustomerEditCustomer(int p_id)
+        //{
+        //    return View(new CustomerVM(_BL.GetACustomer(p_id)));
+        //}
 
 
         public IActionResult CustomerSearchForCustomer()
@@ -132,22 +145,30 @@ namespace WebUI.Controllers
 
         public IActionResult CustomerDisplayListOfSearchedCustomer(CustomerSearchVM p_searchVM)
         {
-            string value;
-            if (p_searchVM.Criteria.ToString() == "email")
+            try
             {
-                value = p_searchVM.Value;
+                string value;
+                if (p_searchVM.Criteria.ToString() == "email")
+                {
+                    value = p_searchVM.Value;
+                }
+                else
+                {
+                    value = p_searchVM.Value.ToUpper();
+                }
+                List<Customer> listOfSearchedCustomer = _BL.SearchCustomers(p_searchVM.Criteria.ToString(), value);
+                List<CustomerVM> listOfSearchedCustomerVM = new List<CustomerVM>();
+                foreach (Customer c in listOfSearchedCustomer)
+                {
+                    listOfSearchedCustomerVM.Add(new CustomerVM(c));
+                }
+                return View(listOfSearchedCustomerVM);
             }
-            else
+            catch (Exception)
             {
-                value = p_searchVM.Value.ToUpper();
+                Log.Information("Fail To Search Customer");
+                return View(nameof(CustomerSearchForCustomer));
             }
-            List<Customer> listOfSearchedCustomer = _BL.SearchCustomers(p_searchVM.Criteria.ToString(), value);
-            List<CustomerVM> listOfSearchedCustomerVM = new List<CustomerVM>();
-            foreach (Customer c in listOfSearchedCustomer)
-            {
-                listOfSearchedCustomerVM.Add(new CustomerVM(c));
-            }
-            return View(listOfSearchedCustomerVM);
         }
 
         public IActionResult Order()
@@ -157,66 +178,83 @@ namespace WebUI.Controllers
 
         public IActionResult OrderDisplayAllstores()
         {
-            return View(
-                _BL.GetAllStoreFronts()
-                .Select(sf => new StoreFrontVM(sf))
-                .ToList()
-            );
+            try
+            {
+                return View(
+                    _BL.GetAllStoreFronts()
+                    .Select(sf => new StoreFrontVM(sf))
+                    .ToList()
+                );
+
+            }
+            catch (Exception)
+            {
+                Log.Information("Fail To Get All Store Fronts");
+                return View(nameof(Order));
+            }
         }
-
-        //public IActionResult OrderDisplayAStoreFrontOrders(int p_sfId)
-        //{
-        //    TempData["sfId"] = p_sfId;
-        //    List<OrderVM> listOfStoreFrontOrders = _BL.GetAStoreFrontOrders(p_sfId).Select(order => new OrderVM(order)).ToList();
-        //    return View(listOfStoreFrontOrders);           
-        //}
-
 
         public IActionResult OrderDisplayAStoreFrontOrders(int p_sfId, string sortOrder)
         {
-            TempData["sfId"] = p_sfId;
-            ViewBag.PriceSortParm = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-
-            IEnumerable<OrderVM> listOfStoreFrontOrders = _BL.GetAStoreFrontOrders(p_sfId).Select(order => new OrderVM(order)).ToList();
-
-            switch (sortOrder)
+            try
             {
-                case "price_desc":
-                    listOfStoreFrontOrders = listOfStoreFrontOrders.OrderByDescending(o => o.TotalPrice);
-                    break;
-                case "Date":
-                    listOfStoreFrontOrders = listOfStoreFrontOrders.OrderBy(o => o.Date);
-                    break;
-                case "date_desc":
-                    listOfStoreFrontOrders = listOfStoreFrontOrders.OrderByDescending(o => o.Date);
-                    break;
-                default:
-                    listOfStoreFrontOrders = listOfStoreFrontOrders.OrderBy(o => o.TotalPrice);
-                    break;
+                TempData["sfId"] = p_sfId;
+                ViewBag.DateSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+                ViewBag.PriceSortParm = sortOrder == "price" ? "price_desc" : "price";
+
+
+                IEnumerable<OrderVM> listOfStoreFrontOrders = _BL.GetAStoreFrontOrders(p_sfId).Select(order => new OrderVM(order)).ToList();
+
+                switch (sortOrder)
+                {
+                    case "price":
+                        listOfStoreFrontOrders = listOfStoreFrontOrders.OrderBy(o => o.TotalPrice);
+                        break;
+                    case "price_desc":
+                        listOfStoreFrontOrders = listOfStoreFrontOrders.OrderByDescending(o => o.TotalPrice);
+                        break;
+
+                    case "date_desc":
+                        listOfStoreFrontOrders = listOfStoreFrontOrders.OrderByDescending(o => o.Date);
+                        break;
+                    default:
+                        listOfStoreFrontOrders = listOfStoreFrontOrders.OrderBy(o => o.Date);
+                        break;
+                }
+
+                return View(listOfStoreFrontOrders);
             }
-
-
-
-            return View(listOfStoreFrontOrders);
+            catch (Exception)
+            {
+                Log.Information("Fail To Sort Order");
+                return View(nameof(Order));
+            }
         }
 
         public IActionResult OrderDisplayOrderDetail(int p_orderId)
         {
-            List<LineItemVM> listOfAnOrderLineItems = _BL.GetAnOrderLineItems(p_orderId).Select(li => new LineItemVM(li)).ToList();
-            List<Product> listOfProducts = _BL.GetAllProducts();
-            foreach (LineItemVM liVM in listOfAnOrderLineItems)
+            try
             {
-                foreach (Product p in listOfProducts)
+                List<LineItemVM> listOfAnOrderLineItems = _BL.GetAnOrderLineItems(p_orderId).Select(li => new LineItemVM(li)).ToList();
+                List<Product> listOfProducts = _BL.GetAllProducts();
+                foreach (LineItemVM liVM in listOfAnOrderLineItems)
                 {
-                    if (liVM.ProductId == p.Id)
+                    foreach (Product p in listOfProducts)
                     {
-                        liVM.ProductName = p.Name;
-                        liVM.ProductPrice = p.Price;
+                        if (liVM.ProductId == p.Id)
+                        {
+                            liVM.ProductName = p.Name;
+                            liVM.ProductPrice = p.Price;
+                        }
                     }
                 }
+                return View(listOfAnOrderLineItems);
             }
-            return View(listOfAnOrderLineItems);
+            catch (Exception)
+            {
+                Log.Information("Fail To Display Order Detail");
+                return View(nameof(Order));
+            }
         }
         public IActionResult Inventory()
         {
@@ -225,40 +263,54 @@ namespace WebUI.Controllers
 
         public IActionResult InventoryDisplayAllstores()
         {
-            return View(
-                _BL.GetAllStoreFronts()
-                .Select(sf => new StoreFrontVM(sf))
-                .ToList()
-            );
+            try
+            {
+                return View(
+                    _BL.GetAllStoreFronts()
+                    .Select(sf => new StoreFrontVM(sf))
+                    .ToList()
+                );
+            }
+            catch (Exception)
+            {
+                Log.Information("Fail To Get All Store Fronts");
+                return View(nameof(Inventory));
+            }
         }
 
         public IActionResult InventoryDisplayAStoreInventory(int p_sfId)
         {
-            TempData["sfId"] = p_sfId;
-            ViewBag.Name = _BL.GetAStore(p_sfId).Name;
-            List<Inventory> listOfTheStoreInventory = _BL.GetAStoreInventory(p_sfId);
-            List<Product> listOfAllProducts = _BL.GetAllProducts();
-            List<TheStoreInventoryVM> listOfTheStoreInventoryVM = new List<TheStoreInventoryVM>();
-            foreach (Inventory inv in listOfTheStoreInventory)
+            try
             {
-                TheStoreInventoryVM inventoryVM = new TheStoreInventoryVM();
-                inventoryVM.Id = inv.Id;
-                inventoryVM.StoreFrontId = inv.StoreFrontId;
-                inventoryVM.Quantity = inv.Quantity;
-                foreach (Product p in listOfAllProducts)
+                TempData["sfId"] = p_sfId;
+                ViewBag.Name = _BL.GetAStore(p_sfId).Name;
+                List<Inventory> listOfTheStoreInventory = _BL.GetAStoreInventory(p_sfId);
+                List<Product> listOfAllProducts = _BL.GetAllProducts();
+                List<TheStoreInventoryVM> listOfTheStoreInventoryVM = new List<TheStoreInventoryVM>();
+                foreach (Inventory inv in listOfTheStoreInventory)
                 {
-                    if (inv.ProductId == p.Id)
+                    TheStoreInventoryVM inventoryVM = new TheStoreInventoryVM();
+                    inventoryVM.Id = inv.Id;
+                    inventoryVM.StoreFrontId = inv.StoreFrontId;
+                    inventoryVM.Quantity = inv.Quantity;
+                    foreach (Product p in listOfAllProducts)
                     {
-                        inventoryVM.ProductId = p.Id;
-                        inventoryVM.ProductName = p.Name;
-                        inventoryVM.ProductPrice = p.Price;
+                        if (inv.ProductId == p.Id)
+                        {
+                            inventoryVM.ProductId = p.Id;
+                            inventoryVM.ProductName = p.Name;
+                            inventoryVM.ProductPrice = p.Price;
+                        }
                     }
+                    listOfTheStoreInventoryVM.Add(inventoryVM);
                 }
-                listOfTheStoreInventoryVM.Add(inventoryVM);
+                return View(listOfTheStoreInventoryVM);
             }
-
-
-            return View(listOfTheStoreInventoryVM);
+            catch (Exception)
+            {
+                Log.Information("Fail To Display A Store Inventory");
+                return View(nameof(Inventory));
+            }
         }
 
         public IActionResult InventoryReplenishInventory(TheStoreInventoryVM p_theStoreInventoryVM)
@@ -273,13 +325,20 @@ namespace WebUI.Controllers
         [HttpPost]
         public IActionResult InventoryReplenishInventory(int p_quantity)
         {
-            int inventoryId = (int)TempData["inventoryId"];
-            _BL.ReplenishInventory(inventoryId, p_quantity);
-            int sfId = (int)TempData["sfId"];
-            TempData.Keep("sfId");
+                int sfId = (int)TempData["sfId"];
+                TempData.Keep("sfId");
+            try
+            {
+                int inventoryId = (int)TempData["inventoryId"];
+                _BL.ReplenishInventory(inventoryId, p_quantity);
 
-            return RedirectToAction("InventoryDisplayAStoreInventory", new { p_sfId = sfId });
-
+                return RedirectToAction("InventoryDisplayAStoreInventory", new { p_sfId = sfId });
+            }
+            catch (Exception)
+            {
+                Log.Information("Fail To Replenish Inventory");
+                return RedirectToAction("InventoryDisplayAStoreInventory", new { p_sfId = sfId });
+            }
         }
     }
 }

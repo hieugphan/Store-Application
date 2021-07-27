@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using WebUI.Models;
+using Serilog;
 
 namespace WebUI.Controllers
 {
@@ -16,6 +17,7 @@ namespace WebUI.Controllers
         private static List<LineItemVM> shoppingCart = new List<LineItemVM>();
         private static string productName = "";
         private static double productPrice = 0.00;
+        //var logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.File("CustomerPortalLog.txt").CreateLogger();
         public CustomerPortalController(IBL p_BL)
         {
             _BL = p_BL;
@@ -56,9 +58,13 @@ namespace WebUI.Controllers
             }
             catch (Exception)
             {
+                Log.Information("User Fail To Register - Incorrect RegEx");
+                ViewBag.Error = "Missing/Invalid Input --- Try Again";
                 return View();
             }
 
+            Log.Information("User Fail To Register");
+            ViewBag.Error = "Missing/Invalid Input --- Try Again";
             return View();
         }
 
@@ -70,31 +76,39 @@ namespace WebUI.Controllers
         [HttpPost]
         public IActionResult SignIn(string p_fname, string p_email)
         {
-            CustomerVM theCust = new CustomerVM();
-            List<Customer> listOfSearchedCustomer = _BL.SearchCustomers("fname", p_fname.ToUpper());
             try
             {
-                if(listOfSearchedCustomer.Count > 0)
+                CustomerVM theCust = new CustomerVM();
+                List<Customer> listOfSearchedCustomers = _BL.SearchCustomers("fname", p_fname.ToUpper());
+                bool flag = false;
+                if(listOfSearchedCustomers.Count > 0)
                 {
-                    foreach (Customer c in listOfSearchedCustomer)
+                    foreach (Customer c in listOfSearchedCustomers)
                     {
                         if(c.Email == p_email)
                         {
                             theCust = new CustomerVM(c);
+                            flag = true;
                         }
                     }
 
-                    TempData["fName"] = theCust.Fname;
-                    TempData["customerId"] = theCust.Id;
+                    if(flag)
+                    {
+                        TempData["fName"] = theCust.Fname;
+                        TempData["customerId"] = theCust.Id;
 
-                    return RedirectToAction("SignInOption");
+                        return RedirectToAction("SignInOption");
+                    }
                 }
             }
             catch (Exception)
             {
+                ViewBag.Error = "DB Not Working";
                 return View();
             }
 
+            Log.Information("User Fail To Log In");
+            ViewBag.Error = ViewBag.Error = "Customer Not Found";
             return View();
         }
 
@@ -107,41 +121,58 @@ namespace WebUI.Controllers
 
         public IActionResult FindAStore()
         {
-            shoppingCart.Clear();
-            return View(
-                _BL.GetAllStoreFronts()
-                .Select(sf => new StoreFrontVM(sf))
-                .ToList()
-            );
+            try
+            {
+                shoppingCart.Clear();
+                return View(
+                    _BL.GetAllStoreFronts()
+                    .Select(sf => new StoreFrontVM(sf))
+                    .ToList()
+                );
+
+            }
+            catch (Exception)
+            {
+                shoppingCart.Clear();
+                return View(nameof(SignInOption));
+            }
+
         }
 
         public IActionResult DisplayAStoreInventory(int p_sfId)
         {
-            TempData["sfId"] = p_sfId;
-            ViewBag.Name = _BL.GetAStore(p_sfId).Name;
-            List<Inventory> theStoreInventory = _BL.GetAStoreInventory(p_sfId);
-            List<Product> listOfProducts = _BL.GetAllProducts();
-            List<TheStoreInventoryVM> listOfTheStoreInventoryVM = new List<TheStoreInventoryVM>();
-            foreach(Inventory inv in theStoreInventory)
+            try
             {
-                TheStoreInventoryVM inventory = new TheStoreInventoryVM();
-                inventory.Id = inv.Id;
-                inventory.StoreFrontId = inv.StoreFrontId;
-                inventory.Quantity = inv.Quantity;
-                foreach(Product p in listOfProducts)
+                TempData["sfId"] = p_sfId;
+                ViewBag.Name = _BL.GetAStore(p_sfId).Name;
+                List<Inventory> theStoreInventory = _BL.GetAStoreInventory(p_sfId);
+                List<Product> listOfProducts = _BL.GetAllProducts();
+                List<TheStoreInventoryVM> listOfTheStoreInventoryVM = new List<TheStoreInventoryVM>();
+                foreach(Inventory inv in theStoreInventory)
                 {
-                    if(inv.ProductId == p.Id)
+                    TheStoreInventoryVM inventory = new TheStoreInventoryVM();
+                    inventory.Id = inv.Id;
+                    inventory.StoreFrontId = inv.StoreFrontId;
+                    inventory.Quantity = inv.Quantity;
+                    foreach(Product p in listOfProducts)
                     {
-                        inventory.ProductId = p.Id;
-                        inventory.ProductName = p.Name;
-                        inventory.ProductPrice = p.Price;
+                        if(inv.ProductId == p.Id)
+                        {
+                            inventory.ProductId = p.Id;
+                            inventory.ProductName = p.Name;
+                            inventory.ProductPrice = p.Price;
+                        }
                     }
+                    listOfTheStoreInventoryVM.Add(inventory);
                 }
-                listOfTheStoreInventoryVM.Add(inventory);
+                return View(listOfTheStoreInventoryVM);
+
             }
-
-
-            return View(listOfTheStoreInventoryVM);
+            catch (Exception)
+            {
+                Log.Information("Fail To Display A Store Inventory");
+                return View(nameof(SignInOption));
+            }
         }
 
         public IActionResult CreateQuantity(TheStoreInventoryVM p_theStoreInventoryVM)
@@ -229,48 +260,65 @@ namespace WebUI.Controllers
 
         public IActionResult ViewOrderHistory(string sortOrder)
         {
-            int customerId = (int)TempData["customerId"];
-            TempData.Keep("customerId");
-
-            ViewBag.PriceSortParm = String.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
-            IEnumerable<OrderVM> listOfCustomerOrders = _BL.GetACustomerOrders(customerId).Select(order => new OrderVM(order)).ToList();
-
-            switch (sortOrder)
+            try
             {
-                case "price_desc":
-                    listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.TotalPrice);
-                    break;
-                case "Date":
-                    listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.Date);
-                    break;
-                case "date_desc":
-                    listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.Date);
-                    break;
-                default:
-                    listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.TotalPrice);
-                    break;
-            }
+                int customerId = (int)TempData["customerId"];
+                TempData.Keep("customerId");
 
-            return View(listOfCustomerOrders);
+                ViewBag.DateSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+                ViewBag.PriceSortParm = sortOrder == "price" ? "price_desc" : "price";
+                IEnumerable<OrderVM> listOfCustomerOrders = _BL.GetACustomerOrders(customerId).Select(order => new OrderVM(order)).ToList();
+
+                switch (sortOrder)
+                {
+                    case "price":
+                        listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.TotalPrice);
+                        break;
+                    case "price_desc":
+                        listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.TotalPrice);
+                        break;
+
+                    case "date_desc":
+                        listOfCustomerOrders = listOfCustomerOrders.OrderByDescending(o => o.Date);
+                        break;
+                    default:
+                        listOfCustomerOrders = listOfCustomerOrders.OrderBy(o => o.Date);
+                        break;
+                }
+
+                return View(listOfCustomerOrders);
+            }
+            catch (Exception)
+            {
+                Log.Information("Fail To Sort");
+                return View(nameof(SignInOption));
+            }
         }
 
         public IActionResult ViewOrderDetail(int p_orderId)
         {
-            List<LineItemVM> listOfAnOrderLineItems = _BL.GetAnOrderLineItems(p_orderId).Select(li => new LineItemVM(li)).ToList();
-            List<Product> listOfProducts = _BL.GetAllProducts();
-            foreach(LineItemVM liVM in listOfAnOrderLineItems)
+            try
             {
-                foreach(Product p in listOfProducts)
+                List<LineItemVM> listOfAnOrderLineItems = _BL.GetAnOrderLineItems(p_orderId).Select(li => new LineItemVM(li)).ToList();
+                List<Product> listOfProducts = _BL.GetAllProducts();
+                foreach(LineItemVM liVM in listOfAnOrderLineItems)
                 {
-                    if(liVM.ProductId == p.Id)
+                    foreach(Product p in listOfProducts)
                     {
-                        liVM.ProductName = p.Name;
-                        liVM.ProductPrice = p.Price;
+                        if(liVM.ProductId == p.Id)
+                        {
+                            liVM.ProductName = p.Name;
+                            liVM.ProductPrice = p.Price;
+                        }
                     }
                 }
+                return View(listOfAnOrderLineItems);
             }
-            return View(listOfAnOrderLineItems);
+            catch (Exception)
+            {
+                Log.Information("Fail To Show Order Detail");
+                return View(nameof(SignInOption));
+            }
         }
     }
 }

@@ -10,6 +10,11 @@
 
     <div>
         <form asp-action="CustomerCreateNewCustomer">
+            @{ if (ViewBag.Error != null)
+            {
+            <div class="mb-3" style="color:red">@ViewBag.Error</div> 
+            } 
+            }
             <div class="mb-3">
                 <label asp-for="Fname" class="form-label">First Name</label>
                 <input asp-for="Fname" type="text" class="form-control">

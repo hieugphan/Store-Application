@@ -10,6 +10,11 @@
 
     <div>
         <form asp-action="Register">
+            @{ if (ViewBag.Error != null)
+                {
+                    <div class="mb-3" style="color:red">@ViewBag.Error</div>
+                } 
+            }
             <div class="mb-3">
                 <label asp-for="Fname" class="form-label">First Name</label>
                 <input asp-for="Fname" type="text" class="form-control">
@@ -45,6 +50,7 @@
                 <input asp-for="Phone" type="number" min="0" class="form-control">
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
+
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>

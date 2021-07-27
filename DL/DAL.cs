@@ -61,7 +61,8 @@ namespace DataAccessLogic
 
         public List<Order> GetACustomerOrders(int p_customerId)
         {
-            return _context.Orders.Where(order => order.CustomerId == p_customerId).Select(order => order).ToList();
+            //return _context.Orders.Where(order => order.CustomerId == p_customerId).Select(order => order).ToList();
+            return _context.Orders.Where(order => order.CustomerId == p_customerId).ToList();
         }
 
         public List<Customer> GetAllCustomers()

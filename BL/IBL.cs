@@ -34,20 +34,7 @@ namespace BusinessLogic
         /// </summary>
         /// <returns>list of customers, empty or not</returns>
         List<Customer> SearchCustomers(string p_criteria, string p_value);
-
-        /// <summary>
-        /// Searchs and Displays any customers that match p_criteria
-        /// </summary>
-        /// <param name="p_criteria"></param>
-        void SearchAndDisplayCustomer(string p_criteria);
-
-        /// <summary>
-        /// Places orders and writes to DB
-        /// Affects many tables
-        /// </summary>
-        /// <param name="p_customer"></param>
-        /// <param name="p_BL"></param>
-        void PlaceOrder(Customer p_customer);
+        
 
         /// <summary>
         /// Gets a list of all inventories from DB-Inventories
@@ -99,13 +86,6 @@ namespace BusinessLogic
         /// <param name="p_replenishedQuantity">replenished quantity</param>
         /// <returns></returns>
         Inventory ReplenishInventory(int p_invId, int p_replenishedQuantity);
-
-        /// <summary>
-        /// AddNewProductInventory or ReplenishInventory and Displays
-        /// </summary>
-        /// <param name="p_theStore"></param>
-        /// <param name="listOfProducts"></param>
-        void ReplenishAndDisplayInventory(StoreFront p_theStore, List<Product> listOfProducts);
 
         /// <summary>
         /// Gets all line items from DB-LineItems
@@ -168,22 +148,6 @@ namespace BusinessLogic
         List<Order> SearchOrders(string p_criteria, string p_value);
 
         /// <summary>
-        /// Searches and Displays in a formatted way
-        /// </summary>
-        /// <param name="p_criteria"></param>
-        /// <param name="_lineItemBL"></param>
-        /// <param name="_productBL"></param>
-        void SearchAndDisplayOrder(string p_criteria);
-
-        /// <summary>
-        /// Views order history in a formatted way
-        /// </summary>
-        /// <param name="p_customer"></param>
-        /// <param name="p_lineItemBL"></param>
-        /// <param name="p_prodBL"></param>
-        void ViewOrderHistory(Customer p_customer);
-
-        /// <summary>
         /// Gets a list of all products from DB-Products
         /// </summary>
         /// <returns>list of all products</returns>
@@ -209,11 +173,6 @@ namespace BusinessLogic
         /// <param name="p_value"></param>
         /// <returns></returns>
         List<StoreFront> SearchStoreFronts(string p_criteria, string p_value);
-
-        /// <summary>
-        /// Searches and Displays store fronts in a formatted way
-        /// </summary>
-        /// <param name="p_criteria"></param>
-        void SearchAndDisplayStoreFront(string p_criteria);
+       
     }
 }

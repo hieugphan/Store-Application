@@ -8,37 +8,45 @@
 <body>
     <h1>List Of Searched Customers</h1>
 
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Email</th>
-                <th>Phone</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Fname)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Lname)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
-                    <td>@Html.DisplayFor(modelItem => item.City)</td>
-                    <td>@Html.DisplayFor(modelItem => item.State)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
-                    <td>@String.Format("{0:(###) ###-####}", long.Parse(item.Phone))</td>
-                    @*<td>
-                        @Html.ActionLink("Edit", "Edit", new { p_id = item.Id }, new { @style = "color:white", @class = "btn btn-secondary" })
-                    </td>*@
-                </tr>
-            }
-        </tbody>
-    </table>
+    @{ 
+        if(Model.Count() > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Fname)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Lname)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                            <td>@Html.DisplayFor(modelItem => item.City)</td>
+                            <td>@Html.DisplayFor(modelItem => item.State)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td>@String.Format("{0:(###) ###-####}", long.Parse(item.Phone))</td>
+                            @*<td>
+                                @Html.ActionLink("Edit", "Edit", new { p_id = item.Id }, new { @style = "color:white", @class = "btn btn-secondary" })
+                            </td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h2>No Results</h2>
+        }
+    }
     <a asp-controller="ManagerPortal" asp-action="CustomerSearchForCustomer" class="btn btn-danger" style="position:relative; top:10px; width:77px;">Back</a>
 </body>
 </html>

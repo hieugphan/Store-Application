@@ -11,12 +11,15 @@ using Microsoft.Extensions.Hosting;
 using DataAccessLogic;
 using BusinessLogic;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace WebUI
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+
+        
 
         public Startup(IConfiguration configuration)
         {
@@ -36,6 +39,10 @@ namespace WebUI
             services.AddScoped<IDAL, DAL>();
             services.AddScoped<IBL, BL>();
 
+            Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File("log.txt")
+            .CreateLogger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
