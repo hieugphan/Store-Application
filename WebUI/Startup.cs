@@ -30,8 +30,8 @@ namespace WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             //AddRazorRuntimeCompilation compile at run time to change html dynamically
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
+            services.AddControllersWithViews();
+            //.AddRazorRuntimeCompilation()
             //reference dbcontext because it's responsible for communicating with DB
             services.AddDbContext<DBContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Reference2DB")));
 
