@@ -30,11 +30,11 @@ jobs:
       uses: highbyte/sonarscan-dotnet@v2.1.1-beta
       with:
         # The key of the SonarQube project
-        sonarProjectKey: 210628-UTA-Net_hieu-phan-p1
+        sonarProjectKey: 210628-UTA-NET_hieu-phan-p1
         # The name of the SonarQube project
         sonarProjectName: hieu-phan-p1
         # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
-        sonarOrganization: 210628-UTA-Net
+        sonarOrganization: 210628-uta-net
         # Optional command arguments to 'dotnet build'
 #         dotnetBuildArguments: # optional
         # Optional command arguments to 'dotnet test'
