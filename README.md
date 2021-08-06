@@ -3,3 +3,6 @@ This application is designed with functionality that would make virtual shopping
 
 Environment / Technologies 
 C# Programming, ASP.NET MVC, ADO.NET Entity Framework, Testing Process / SDLC, HTML5, CSS3, Defect Logging, SQL, XML, JavaScript, PostgreSQL
+
+Link: https://webuihieuphan.azurewebsites.net/
+Manager PW: 1234
